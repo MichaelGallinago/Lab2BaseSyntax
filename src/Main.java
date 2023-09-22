@@ -26,7 +26,9 @@ public class Main {
 
             String[] textNumbers = line.split("[/\\-*+]");
             ArrayList<Double> valueList = new ArrayList<>();
-            for (String string : textNumbers) valueList.add(Double.valueOf(string));
+            for (String string : textNumbers) {
+                valueList.add(Double.valueOf(string));
+            }
 
             applyOperators(operators, "*/", valueList);
 
