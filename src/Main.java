@@ -18,67 +18,65 @@ public class Main {
                 stringBuilder.insert(1 + i * 2, operators[operatorsId[i]]);
             }
 
-            String string = stringBuilder.toString().replaceAll(" ", "");
-            String signs = string.replaceAll("[1234567890]", "");
-            if (signs.isEmpty()) {
+            String line = stringBuilder.toString().replaceAll(" ", "");
+            String operators = line.replaceAll("[1234567890]", "");
+            if (operators.isEmpty()) {
                 continue;
             }
 
-            double[] values = Arrays.stream(string.split("[/\\-*+]")).mapToDouble(Double::parseDouble).toArray();
-
+            String[] textNumbers = line.split("[/\\-*+]");
             ArrayList<Double> valueList = new ArrayList<>();
-            for (double value : values) valueList.add(value);
+            for (String string : textNumbers) valueList.add(Double.valueOf(string));
 
-            int j = 0;
-            for (int i = 0; i < valueList.size() - 1; i++) {
-                char currentSign = signs.charAt(j);
-                if (currentSign == '*' || currentSign == '/') {
-                    i = updateValueList(valueList, i, currentSign);
-                }
-                j++;
-            }
+            applyOperators(operators, "*/", valueList);
 
-            signs = signs.replaceAll("[*/]", "");
-            if (!signs.isEmpty()) {
-                int l = 0;
-                for (int i = 0; i < valueList.size() - 1; i++) {
-                    char currentSign = signs.charAt(l);
-                    if (currentSign == '+' || currentSign == '-') {
-                        i = updateValueList(valueList, i, currentSign);
-                    }
-                    l++;
-                }
+            operators = operators.replaceAll("[*/]", "");
+
+            if (!operators.isEmpty()) {
+                applyOperators(operators, "+-", valueList);
             }
 
             if (Math.abs(valueList.get(0) - 100d) < 0.0001d) {
-                System.out.println(string + " = " + valueList.get(0));
+                System.out.println(line + " = " + valueList.get(0));
             }
 
             nextOperatorsId();
         }
     }
 
+    private static void applyOperators(String operators, String operatorFilter, ArrayList<Double> valueList) {
+        int j = 0;
+        for (int i = 0; i < valueList.size() - 1; i++) {
+            char currentOperator = operators.charAt(j);
+            if (operatorFilter == null || operatorFilter.indexOf(currentOperator) >= 0) {
+                i = updateValueList(valueList, i, currentOperator);
+            }
+            j++;
+        }
+    }
+
     private static int updateValueList(ArrayList<Double> valueList, int index, char operator) {
-        double value;
+        double operationValue = valueList.get(index + 1);
+        double result = valueList.get(index);
         switch (operator) {
             case '+':
-                value = valueList.get(index) + valueList.get(index + 1);
+                result += operationValue;
                 break;
             case '-':
-                value = valueList.get(index) - valueList.get(index + 1);
+                result -= operationValue;
                 break;
             case '/':
-                value = valueList.get(index) / valueList.get(index + 1);
+                result /= operationValue;
                 break;
             case '*':
-                value = valueList.get(index) * valueList.get(index + 1);
+                result *= operationValue;
                 break;
             default:
                 return index;
         }
 
 
-        valueList.set(index, value);
+        valueList.set(index, result);
         valueList.remove(index + 1);
         return index - 1;
     }
