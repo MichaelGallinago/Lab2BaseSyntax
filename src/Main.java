@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -38,7 +37,7 @@ public class Main {
                 applyOperators(operators, "+-", valueList);
             }
 
-            if (Math.abs(valueList.get(0) - 100d) < 0.0001d) {
+            if (Math.abs(valueList.get(0) - 100d) < 0.0000001d) {
                 System.out.println(line + " = " + valueList.get(0));
             }
 
